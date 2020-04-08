@@ -1,8 +1,11 @@
+import os
+import json
 import pickle
 import numpy as np
 import scipy.sparse
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+from my_preprocess import preprocessing
 
 
 def get_features(sen1, sen2):
