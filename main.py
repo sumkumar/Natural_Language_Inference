@@ -6,7 +6,8 @@ import tensorflow as tf
 from tensorflow import keras
 from my_preprocess import preprocessing
 from tfidf_test import lr_test
-
+from bert_pytorch import run_bert
+from lstm_model_test import lstm_test
 
 if __name__ == "__main__":
 
@@ -44,6 +45,9 @@ if __name__ == "__main__":
     test_sen2 = preprocessing(sen2)
     test_res = res
     lr_test(test_sen1, test_sen2, test_res)
-    
+    print("Bert Model")
+    run_bert()
+    print("LSTM Model, might take some time as GloVe embedding is being downloaded")
+    lstm_test()
     
     

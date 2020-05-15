@@ -25,8 +25,18 @@ def get_model2(embedding_matrix, vocab_size, input_length):
 def get_model(embedding_matrix, vocab_size, input_length):
     model = keras.Sequential()
     model.add(keras.layers.Embedding(vocab_size,300,weights = [embedding_matrix],input_length=300,trainable = False))
-    model.add(keras.layers.Bidirectional(keras.layers.LSTM(75)))
+    #model.add(keras.layers.Bidirectional(keras.layers.LSTM(1024, return_sequences=True)))
+    model.add(keras.layers.Bidirectional(keras.layers.LSTM(512, return_sequences=True)))
+    model.add(keras.layers.Bidirectional(keras.layers.LSTM(256, return_sequences=True)))
+    model.add(keras.layers.Bidirectional(keras.layers.LSTM(128, return_sequences=True)))
+    model.add(keras.layers.Bidirectional(keras.layers.LSTM(128, return_sequences=True)))
+    model.add(keras.layers.Bidirectional(keras.layers.LSTM(128)))
+    model.add(keras.layers.Dense(4096,activation = 'relu'))
+    model.add(keras.layers.Dropout(0.2))
+    model.add(keras.layers.Dense(1024,activation = 'relu'))
+    model.add(keras.layers.Dropout(0.25))
     model.add(keras.layers.Dense(32,activation = 'relu'))
+    model.add(keras.layers.Dropout(0.3))
     model.add(keras.layers.Dense(3,activation = 'softmax'))
     model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics = ['accuracy'])
     return model
@@ -42,7 +52,7 @@ def dl_model_train(sen1, sen2, res):
     pad_seq = keras.preprocessing.sequence.pad_sequences(seq,maxlen=DIM)
     vocab_size = len(token.word_index)+1
     embedding_vector = {}
-    f = open('./glove.6B.300d.txt')
+    f = open('./glove.6B.300d.txt', encoding="utf8")
     for line in tqdm(f):
         value = line.split(' ')
         word = value[0]
@@ -131,14 +141,22 @@ def dl_model_train2(sen1, sen2, res):
             embedding_matrix[i] = embedding_value
     model = get_model(embedding_matrix, vocab_size, input_length)
     model.compile(optimizer='adam',loss='binary_crossentropy',metrics = ['accuracy'])
-    history = model.fit(pad_seq,res,epochs = 5,batch_size=256,validation_split=0.2)
+    history = model.fit(pad_seq,res,epochs = 15,batch_size=256,validation_split=0.2)
     
     
     
 
 
 if __name__ == "__main__":
-
+    device_name = tf.test.gpu_device_name()
+    if device_name != '/device:GPU:0':
+        MLP_model_name = 'models/MLP_model_CPU.h5'
+        #convnet_model_name = 'models/convnet_model_CPU.h5'
+        #raise SystemError('GPU device not found')
+    else :
+        MLP_model_name = 'models/MLP_model_GPU.h5'
+        #convnet_model_name = 'models/convnet_model_GPU.h5'
+    print('Found GPU at: {}'.format(device_name))
     
     data_path = os.path.split(os.getcwd())
     data_path = data_path[0] + '/' + data_path[1] + '/snli_1.0'
