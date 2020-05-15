@@ -10,15 +10,7 @@ from tfidf_test import lr_test
 
 if __name__ == "__main__":
 
-    device_name = tf.test.gpu_device_name()
-    if device_name != '/device:GPU:0':
-        MLP_model_name = 'models/MLP_model_CPU.h5'
-        #convnet_model_name = 'models/convnet_model_CPU.h5'
-        #raise SystemError('GPU device not found')
-    else :
-        MLP_model_name = 'models/MLP_model_GPU.h5'
-        #convnet_model_name = 'models/convnet_model_GPU.h5'
-    print('Found GPU at: {}'.format(device_name))
+    
 
     
     data_path = os.path.split(os.getcwd())
